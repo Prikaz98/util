@@ -752,16 +752,15 @@ class AsyncStreamTest extends AnyFunSuite with ScalaCheckDrivenPropertyChecks {
     test(s"$impl: fromSeq is stack-safe") {
       val n = 100000
       val longSeq = (0 until n).toSeq
-      val result = AsyncStream.fromSeq(longSeq)
-        .filter(i => i > 10)
-        .filter(i => i > 100)
-        .filter(i => i > 1000)
-        .filter(i => i > 10000)
-        .filter(i => i > 100000)
+      val stream = AsyncStream.fromSeq(longSeq)
+        .filter(_ > 10)
+        .filter(_ > 100)
+        .filter(_ > 1000)
+        .filter(_ > 10000)
+        .filter(_ > 100000)
         .take(Int.MaxValue)
-        .toSeq
 
-      assert(Await.result(result.liftToTry).isReturn)
+      assert(Await.result(stream.toSeq.liftToTry).isReturn)
     }
   }
 
